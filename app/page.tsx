@@ -9,12 +9,14 @@ import { Button } from "@/components/ui/button"
 export default function Page() {
   const [open, setOpen] = React.useState(false)
   const [selectedInvoice, setSelectedInvoice] = React.useState<any | null>(null)
+  const [status, setStatus] = React.useState<string | null>(null)
+  const [dateRange, setDateRange] = React.useState<{ from: string | null; to: string | null }>({ from: null, to: null })
 
   function handleOpenChange(open: boolean) {
     setSelectedInvoice(null)
     setOpen(open)
   }
-
+  
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -26,12 +28,12 @@ export default function Page() {
       <div className="flex-1 space-y-4 p-4 pt-6 md:p-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <StatusFilter />
-            <CalendarDateRangePicker />
+            <StatusFilter onChange={(value) => setStatus(value)} />
+            <CalendarDateRangePicker onChange={(range) => setDateRange(range)} />
           </div>
           <Button onClick={() => handleOpenChange(true)}>Create Invoice</Button>
         </div>
-        <InvoiceTable />
+        <InvoiceTable status={status} dateRange={dateRange} />
       </div>
       <EditInvoiceDialog open={open} onOpenChange={handleOpenChange} invoice={selectedInvoice} />
     </div>

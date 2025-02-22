@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils"
 import { statuses } from "@/enums/status"
 
-export function StatusFilter() {
+export function StatusFilter({ onChange }: { onChange?: (value: string) => void }) {
   const [open, setOpen] = React.useState(false)
   const [value, setValue] = React.useState("ALL")
 
@@ -34,6 +34,7 @@ export function StatusFilter() {
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue)
                     setOpen(false)
+                    onChange?.(currentValue === value ? "ALL" : currentValue)
                   }}
                 >
                   <Check className={cn("mr-2 h-4 w-4", value === status.value ? "opacity-100" : "opacity-0")} />

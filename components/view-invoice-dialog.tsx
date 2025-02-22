@@ -20,11 +20,11 @@ export function ViewInvoiceDialog({ open, onOpenChange, invoice }: ViewInvoiceDi
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between mt-4">
-            <span>Invoice #{invoice.invoiceNumber}</span>
-            <Button variant="outline" size="sm">
+            <span>Invoice <span className="text-gray-500 font-mono">#{invoice.invoiceNo}</span></span>
+            {/* <Button variant="outline" size="sm">
               <Download className="mr-2 h-4 w-4" />
               Download PDF
-            </Button>
+            </Button> */}
           </DialogTitle>
         </DialogHeader>
         <div className="grid gap-6">
@@ -36,13 +36,13 @@ export function ViewInvoiceDialog({ open, onOpenChange, invoice }: ViewInvoiceDi
               <CardContent className="grid gap-2">
                 <div>
                   <div className="text-sm font-medium">{invoice.customer}</div>
-                  <div className="text-sm text-muted-foreground">customer@example.com</div>
+                  {/* <div className="text-sm text-muted-foreground">customer@example.com</div> */}
                 </div>
-                <div className="text-sm text-muted-foreground">
+                {/* <div className="text-sm text-muted-foreground">
                   123 Business Street
                   <br />
                   City, State 12345
-                </div>
+                </div> */}
               </CardContent>
             </Card>
             <Card>
@@ -81,6 +81,27 @@ export function ViewInvoiceDialog({ open, onOpenChange, invoice }: ViewInvoiceDi
           </div>
           <Card>
             <CardHeader>
+              <CardTitle>Invoice Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-2">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-medium">Invoice Number</div>
+                  <div className="text-sm">{invoice.invoiceNo}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-medium">Invoice Date</div>
+                  <div className="text-sm">{new Date(invoice.date).toUTCString() || "N/A"}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="text-sm font-medium">Notes</div>
+                  <div className="text-sm">{invoice.notes || "N/A"}</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
               <CardTitle>Attached Files</CardTitle>
               <CardDescription>Files and documents attached to this invoice</CardDescription>
             </CardHeader>
@@ -101,7 +122,7 @@ export function ViewInvoiceDialog({ open, onOpenChange, invoice }: ViewInvoiceDi
               </div>
             </CardContent>
           </Card>
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Payment History</CardTitle>
             </CardHeader>
@@ -132,7 +153,7 @@ export function ViewInvoiceDialog({ open, onOpenChange, invoice }: ViewInvoiceDi
                 </div>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </DialogContent>
     </Dialog>

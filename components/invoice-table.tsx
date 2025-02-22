@@ -36,26 +36,39 @@ type Invoice = {
 }
 
 const data: Invoice[] = []
-export function InvoiceTable() {
+export function InvoiceTable({ status, dateRange }: { status: string | null; dateRange: { from: string | null; to: string | null } }) {
   const [invoices, setInvoices] = React.useState<Invoice[]>()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [viewInvoice, setViewInvoice] = React.useState<Invoice | null>(null)
   const [editInvoice, setEditInvoice] = React.useState<Invoice | null>(null)
 
-  
   async function fetchInvoices() {
     try {
-      const res = await axios.get("http://localhost:3000/invoice");
+      const params = new URLSearchParams()
+      if (status) params.append("status", status)
+      if (dateRange.from) params.append("from", dateRange.from)
+      if (dateRange.to) params.append("to", dateRange.to)
+        
+      const res = await axios.get(`http://localhost:3000/invoice?${params.toString()}`)
       setInvoices(res.data);
     } catch (error) {
       console.error("Error fetching invoices:", error);
     }
   }
 
+  async function deleteInvoice(id: string) {
+    try {
+      await axios.delete(`http://localhost:3000/invoice/${id}`);
+      fetchInvoices();
+    } catch (error) {
+      console.error("Error deleting invoice:", error);
+    }
+  }
+
   React.useEffect(() => {
     fetchInvoices();
-  }, [])
+  }, [status, dateRange])
 
   
   const columns: ColumnDef<Invoice>[] = [
@@ -114,22 +127,6 @@ export function InvoiceTable() {
       },
     },
     {
-      accessorKey: "createdAt",
-      header: "Created At",
-      cell: ({ row }) => {
-        const createdAt = new Date(row.getValue("createdAt"))
-        return createdAt.toLocaleDateString()
-      }
-    },
-    {
-      accessorKey: "updatedAt",
-      header: "Updated At",
-      cell: ({ row }) => {
-        const updatedAt = new Date(row.getValue("updatedAt"))
-        return updatedAt.toLocaleDateString()
-      }
-    },
-    {
       id: "actions",
       cell: ({ row }) => {
         const invoice = row.original
@@ -146,7 +143,7 @@ export function InvoiceTable() {
                 View Details
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setEditInvoice(invoice)}>Edit Invoice</DropdownMenuItem>
-              <DropdownMenuItem>Download PDF</DropdownMenuItem>
+              <DropdownMenuItem className="text-red-600" onClick={() => deleteInvoice(invoice.id)}>Delete</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )
