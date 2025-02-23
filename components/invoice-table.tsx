@@ -47,10 +47,12 @@ export function InvoiceTable({ status, dateRange }: { status: string | null; dat
     try {
       const params = new URLSearchParams()
       if (status) params.append("status", status)
-      if (dateRange.from) params.append("from", dateRange.from)
-      if (dateRange.to) params.append("to", dateRange.to)
+      if (dateRange.from && dateRange.to) {
+        params.append("from", dateRange.from)
+        params.append("to", dateRange.to)
+      }
         
-      const res = await axios.get(`http://localhost:3000/invoice?${params.toString()}`)
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_API_URI}/invoice?${params.toString()}`)
       setInvoices(res.data);
     } catch (error) {
       console.error("Error fetching invoices:", error);
@@ -59,7 +61,7 @@ export function InvoiceTable({ status, dateRange }: { status: string | null; dat
 
   async function deleteInvoice(id: string) {
     try {
-      await axios.delete(`http://localhost:3000/invoice/${id}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_API_URI}/invoice/${id}`);
       fetchInvoices();
     } catch (error) {
       console.error("Error deleting invoice:", error);

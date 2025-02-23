@@ -86,7 +86,7 @@ export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDi
         }
 
         // Update invoice in the database
-        const res = await axios.patch(`http://localhost:3000/invoice/${invoice.id}`, updatedInvoice)
+        const res = await axios.patch(`${process.env.NEXT_PUBLIC_BACKEND_API_URI}/invoice/${invoice.id}`, updatedInvoice)
         if (res.status === 200) {
           // Alert user that invoice was updated successfully
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -103,7 +103,7 @@ export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDi
         }
 
         // Save new invoice to the backend database
-        const res = await axios.post("http://localhost:3000/invoice", newInvoice)
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URI}/invoice`, newInvoice)
         if (res.status === 201) {
           // Alert user that invoice was created successfully
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
@@ -232,7 +232,7 @@ export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDi
                 </FormItem>
               )}
             />
-            <FileUpload />
+            {/* <FileUpload /> */}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel

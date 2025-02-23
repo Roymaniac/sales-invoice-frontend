@@ -15,6 +15,15 @@ interface ViewInvoiceDialogProps {
 export function ViewInvoiceDialog({ open, onOpenChange, invoice }: ViewInvoiceDialogProps) {
   if (!invoice) return null
 
+  const handleDownload = (url: string) => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', '');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -107,18 +116,20 @@ export function ViewInvoiceDialog({ open, onOpenChange, invoice }: ViewInvoiceDi
             </CardHeader>
             <CardContent>
               <div className="grid gap-2">
-                {/* Example attached files */}
-                <div className="flex items-center gap-2 rounded-md border p-2">
-                  <File className="h-4 w-4 text-muted-foreground" />
-                  <div className="flex-1 text-sm">
-                    <p className="truncate font-medium">invoice-details.pdf</p>
-                    <p className="text-xs text-muted-foreground">2.5MB</p>
-                  </div>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Download className="h-4 w-4" />
-                    <span className="sr-only">Download file</span>
-                  </Button>
-                </div>
+                { invoice.files && invoice.files.map((file: any) => (
+                    <div key={file.id} className="flex items-center gap-2 rounded-md border p-2">
+                      <File className="h-4 w-4 text-muted-foreground" />
+                      <div className="flex-1 text-sm">
+                        <p className="truncate font-medium">{file.name ?? 'N/A'}</p>
+                        <p className="text-xs text-muted-foreground">{file.size}</p>
+                      </div>
+                      <Button onClick={() => {handleDownload(file.url)}} variant="ghost" size="icon" className="h-8 w-8">
+                        <Download className="h-4 w-4" />
+                        <span className="sr-only">Download file</span>
+                      </Button>
+                    </div>
+                  ))
+                }
               </div>
             </CardContent>
           </Card>
