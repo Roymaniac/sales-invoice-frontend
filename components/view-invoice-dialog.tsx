@@ -116,20 +116,23 @@ export function ViewInvoiceDialog({ open, onOpenChange, invoice }: ViewInvoiceDi
             </CardHeader>
             <CardContent>
               <div className="grid gap-2">
-                { invoice.files && invoice.files.map((file: any) => (
+                {invoice.files && invoice.files.length > 0 ? (
+                  invoice.files.map((file: any) => (
                     <div key={file.id} className="flex items-center gap-2 rounded-md border p-2">
                       <File className="h-4 w-4 text-muted-foreground" />
                       <div className="flex-1 text-sm">
-                        <p className="truncate font-medium">{file.name ?? 'N/A'}</p>
+                        <p className="truncate font-medium">{file.name ?? "N/A"}</p>
                         <p className="text-xs text-muted-foreground">{file.size}</p>
                       </div>
-                      <Button onClick={() => {handleDownload(file.url)}} variant="ghost" size="icon" className="h-8 w-8">
+                      <Button onClick={() => handleDownload(file.url)} variant="ghost" size="icon" className="h-8 w-8">
                         <Download className="h-4 w-4" />
                         <span className="sr-only">Download file</span>
                       </Button>
                     </div>
                   ))
-                }
+                ) : (
+                  <p className="text-sm text-muted-foreground">No files attached</p>
+                )}
               </div>
             </CardContent>
           </Card>

@@ -232,7 +232,7 @@ export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDi
                 </FormItem>
               )}
             />
-            {/* <FileUpload /> */}
+            {invoice && <FileUpload invoiceId={invoice.id} />}
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel

@@ -5,14 +5,35 @@ import { useDropzone } from "react-dropzone"
 import { Cloud, File, Loader2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import axios from "axios"
 
-export function FileUpload() {
+interface FileUploadProps {
+  invoiceId: string
+}
+
+export function FileUpload({ invoiceId }: FileUploadProps) {
   const [files, setFiles] = React.useState<File[]>([])
   const [loading, setLoading] = React.useState(false)
 
-  const onDrop = React.useCallback((acceptedFiles: File[]) => {
-    setFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
-  }, [])
+  const onDrop = React.useCallback(async (acceptedFiles: File[]) => {
+    if (!invoiceId && acceptedFiles.length === 0) return
+    setLoading(true)
+
+    const formData = new FormData()
+    acceptedFiles.forEach((file) => formData.append("file", file))
+    formData.append("invoiceId", invoiceId)
+
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URI}/invoice/${invoiceId}/upload`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      setFiles((prevFiles) => [...prevFiles, ...acceptedFiles])
+    } catch (error) {
+      console.error("File upload failed:", error)
+    } finally {
+      setLoading(false)
+    }
+  }, [invoiceId])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -56,9 +77,9 @@ export function FileUpload() {
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <Button type="button" variant="ghost" size="icon" className="h-8 w-8" onClick={() => removeFile(file)}>
-                  <X className="h-4 w-4" />
+                <X className="h-4 w-4" />
                   <span className="sr-only">Remove file</span>
-                </Button>
+              </Button>
               )}
             </div>
           ))}
