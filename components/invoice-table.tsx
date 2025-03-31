@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, Eye, MoreHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 import axios from "axios"
 
@@ -129,6 +129,20 @@ export function InvoiceTable({ status, dateRange }: { status: string | null; dat
       },
     },
     {
+      accessorKey: "view",
+      header: "",
+      // give an eye view icon
+      cell: ({ row }) => {
+        const invoice = row.original
+        return (
+          <Button variant="ghost" className="h-8 w-8 p-0" onClick={() => setViewInvoice(invoice)}>
+            <span className="sr-only">View Invoice</span>
+            <Eye className="h-4 w-4" />
+          </Button>
+        )
+      }
+    },
+    {
       id: "actions",
       cell: ({ row }) => {
         const invoice = row.original
@@ -141,9 +155,9 @@ export function InvoiceTable({ status, dateRange }: { status: string | null; dat
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setViewInvoice(invoice)}>
+              {/* <DropdownMenuItem onClick={() => setViewInvoice(invoice)}>
                 View Details
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
               <DropdownMenuItem onClick={() => setEditInvoice(invoice)}>Edit Invoice</DropdownMenuItem>
               <DropdownMenuItem className="text-red-600" onClick={() => deleteInvoice(invoice.id)}>Delete</DropdownMenuItem>
             </DropdownMenuContent>
@@ -221,6 +235,7 @@ export function InvoiceTable({ status, dateRange }: { status: string | null; dat
         open={!!editInvoice}
         onOpenChange={(open) => !open && setEditInvoice(null)}
         invoice={editInvoice}
+        onUpdated={() => fetchInvoices()}
       />
     </>
   )

@@ -21,6 +21,8 @@ export function CalendarDateRangePicker({ className, onChange }: React.HTMLAttri
     onChange?.(selectedDate)
   }
 
+  const formatDate = (date: Date) => new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(date); // Adjust locale if needed
+
   return (
     <div className={cn("grid gap-2", className)}>
       <Popover>
@@ -34,10 +36,10 @@ export function CalendarDateRangePicker({ className, onChange }: React.HTMLAttri
             {date?.from ? (
               date.to ? (
                 <>
-                  {date.from.toLocaleDateString()} - {date.to.toLocaleDateString()}
+                  {formatDate(date.from)} - {formatDate(date.to)}
                 </>
               ) : (
-                date.from.toLocaleDateString()
+                formatDate(date.from)
               )
             ) : (
               <span>Pick a date range</span>

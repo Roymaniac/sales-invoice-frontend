@@ -18,6 +18,7 @@ import * as z from "zod"
 import { FileUpload } from "./file-upload"
 import * as React from "react"
 import axios from "axios"
+import { toast } from "./ui/use-toast"
 
 const formSchema = z.object({
   invoiceNo: z.string().min(1, "Invoice number is required"),
@@ -45,10 +46,11 @@ type Invoice = {
 interface EditInvoiceDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  invoice?: Invoice | null
+  invoice?: Invoice | null,
+  onUpdated: () => void
 }
 
-export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDialogProps) {
+export function EditInvoiceDialog({ open, onOpenChange, invoice, onUpdated }: EditInvoiceDialogProps) {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,8 +58,8 @@ export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDi
       invoiceNo: invoice?.invoiceNo || "",
       customer: invoice?.customer || "",
       amount: invoice?.amount?.toString() || "",
-      date: invoice?.date || "",
-      dueDate: invoice?.dueDate || "",
+      date: invoice?.date ? new Date(invoice.date).toISOString().split("T")[0] : "",
+      dueDate: invoice?.dueDate ? new Date(invoice.dueDate).toISOString().split("T")[0] : "",
       status: invoice?.status || "",
       notes: invoice?.notes || "",
     },
@@ -69,11 +71,13 @@ export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDi
         invoiceNo: invoice.invoiceNo || "",
         customer: invoice.customer || "",
         amount: invoice.amount?.toString() || "",
-        date: invoice.date || "",
-        dueDate: invoice.dueDate || "",
+        date: invoice.date ? new Date(invoice.date).toISOString().split("T")[0] : "",
+        dueDate: invoice.dueDate ? new Date(invoice.dueDate).toISOString().split("T")[0] : "",
         status: invoice.status || "",
         notes: invoice.notes || "",
       })
+    } else {
+      form.reset() 
     }
   }, [invoice, form])
 
@@ -89,9 +93,8 @@ export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDi
         const res = await axios.patch(`${process.env.NEXT_PUBLIC_BACKEND_API_URI}/invoice/${invoice.id}`, updatedInvoice)
         if (res.status === 200) {
           // Alert user that invoice was updated successfully
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-            <strong className="font-bold">Success!</strong>
-          </div>
+          toast({ title: "Success", description: "Invoice updated successfully!", variant: "default" })
+          onUpdated()
           console.log("Invoice updated successfully")
         }
       
@@ -106,16 +109,18 @@ export function EditInvoiceDialog({ open, onOpenChange, invoice }: EditInvoiceDi
         const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_API_URI}/invoice`, newInvoice)
         if (res.status === 201) {
           // Alert user that invoice was created successfully
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-            <strong className="font-bold">Success!</strong>
-          </div>
+          toast({ title: "Success", description: "Invoice created successfully!", variant: "default" })
+          onOpenChange(false)
+          onUpdated()
           console.log("Invoice created successfully")
         }
 
       }
     } catch (error) {
+      toast({ title: "Error", description: "Something went wrong!", variant: "destructive" })
       console.error("Error updating invoice:", error)
     }
+    // Close the dialog after submission
     onOpenChange(false)
   }
 
